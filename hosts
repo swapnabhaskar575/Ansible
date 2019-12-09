@@ -19,7 +19,7 @@
 172.31.9.10 ansible_connection=local
 
 [web]
-172.31.9.10 ansible_user=ubuntu
+#172.31.9.10 ansible_user=ubuntu
 # Ex 2: A collection of hosts belonging to the 'webservers' group
 
 ## [webservers]
