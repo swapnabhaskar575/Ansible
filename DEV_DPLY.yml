@@ -1,0 +1,35 @@
+---
+- hosts: Dev 
+  become: true
+  remote_user: ubuntu
+  tasks: 
+#    - name: deploying war file from nexusrepo
+#    - maven_artifact:
+#        group_id: com.ltts.devops 
+#        artifact_id: ltts.devops 
+#        version: 1.0_(${env.BUILD_NUMBER})
+#        vars: 
+#            - BN: ${BUILD_NUMBER}
+#              version: 1.0_{{BN}}
+#        extension: war 
+#        repository_url: 'http://15.206.198.201:8082/nexus/content/repositories/releases' 
+#        dest: /opt/tomcat/webapps/ltts.devops.war
+#      get_url:
+#       url: http://15.206.198.201:8082/nexus/content/groups/public/com/ltts/devops/ltts.devops/1.0_8/ltts.devops-1.0_8.war
+#        dest: /opt/tomcat/webapps
+       
+    - name: copy war file from jenkins to tomcat
+      become: true 
+#      shell: "scp -o StrictHostKeyChecking=no target/*.war ubuntu@13.235.52.139:/opt/tomcat/webapps/"
+      copy:
+           src: /var/lib/jenkins/workspace/CIDEMO/target/petclinic.war
+           dest: /opt/tomcat/webapps/petclinic.war
+           follow: yes
+           mode: 0755
+    
+
+#    - name: Stop  Tomcat service
+#      shell: nohup /opt/tomcat/bin/shutdown.sh &
+
+    - name: Start  Tomcat service
+      shell: nohup /opt/tomcat/bin/startup.sh &

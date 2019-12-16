@@ -1,0 +1,78 @@
+---
+- hosts: PROD
+
+  become: yes
+  become_method: sudo
+  remote_user: ubuntu
+
+  tasks:
+  - name: Update and upgrade apt packages
+    become: true
+    apt:
+         update_cache: yes
+
+  - name: install JDK 8
+    apt:
+      name: openjdk-8-jdk
+      #name: openjdk-8-jre
+      state: present
+
+  - name: add tomcat group
+    group:
+      name: tomcat
+
+  - name: add tomcat user
+    user:
+      name: tomcat
+      group: tomcat
+      home: /user/share/tomcat
+      createhome: no
+
+  - name: create /opt/tomcat directory
+    file:
+      path: /opt/tomcat
+      state: directory
+      mode: 0755
+
+  - name: download & unarchive
+    unarchive:
+            src: http://apachemirror.wuchna.com/tomcat/tomcat-8/v8.5.50/bin/apache-tomcat-8.5.50.tar.gz
+            dest: /opt/tomcat
+            remote_src: yes
+            extra_opts: [--strip-components=1]
+
+  - name: Change ownership
+    file:
+      path: /opt/tomcat
+      owner: ubuntu
+      group: ubuntu
+      mode: 0755
+      recurse: yes
+      state: directory
+
+  - name: Copy Tomcat service from local to remote
+    copy:
+       src: /etc/ansible/tomcat.service
+       dest: /etc/systemd/system/tomcat.service
+       mode: 0755
+
+  - name: overwrite file if it exists context.xml from local to remote
+    copy:
+       src: /etc/ansible/context.xml
+       dest: /opt/tomcat/webapps/manager/META-INF/context.xml
+       follow: yes
+
+  - name: overwrite file if it exists context.xml from local to remote
+    copy:
+       src: /etc/ansible/context.xml
+       dest: /opt/tomcat/webapps/host-manager/META-INF/context.xml
+       follow: yes
+
+  - name: overwrite file if it exists tomcat-users.xml from local to remote
+    copy:
+       src: /etc/ansible/tomcat-users.xml
+       dest: /opt/tomcat/conf/tomcat-users.xml
+       follow: yes
+
+  - name: Start  Tomcat service
+    shell: nohup /opt/tomcat/bin/startup.sh &
