@@ -52,25 +52,25 @@
 
   - name: Copy Tomcat service from local to remote
     copy:
-       src: /etc/ansible/tomcat.service
+       src: tomcat.service
        dest: /etc/systemd/system/tomcat.service
        mode: 0755
 
   - name: overwrite file if it exists context.xml from local to remote
     copy:
-       src: /etc/ansible/context.xml
+       src: context.xml
        dest: /opt/tomcat/webapps/manager/META-INF/context.xml
        follow: yes
 
   - name: overwrite file if it exists context.xml from local to remote
     copy:
-       src: /etc/ansible/context.xml
+       src: context.xml
        dest: /opt/tomcat/webapps/host-manager/META-INF/context.xml
        follow: yes
 
   - name: overwrite file if it exists tomcat-users.xml from local to remote
     copy:
-       src: /etc/ansible/tomcat-users.xml
+       src: tomcat-users.xml
        dest: /opt/tomcat/conf/tomcat-users.xml
        follow: yes
 
